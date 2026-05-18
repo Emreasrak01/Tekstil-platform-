@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}{% block panel_title %}Fabrika Paneli{% endblock %} - AREM81{% endblock %}
+
+{% block content %}
+<main class="panel-layout">
+    <aside class="panel-sidebar">
+        <div class="panel-brand">
+            <h2>{{ user.factory_profile.company_name|default:user.username }}</h2>
+            <p>Fabrika çalışma alanı</p>
+        </div>
+        <nav>
+            <a class="side-link {% if request.resolver_match.url_name == 'factory_dashboard' %}active{% endif %}" href="{% url 'factory_dashboard' %}">
+                <i class="fa-solid fa-chart-line"></i> Genel Bakış
+            </a>
+            <a class="side-link {% if request.resolver_match.url_name == 'add_product' %}active{% endif %}" href="{% url 'add_product' %}">
+                <i class="fa-solid fa-plus"></i> Ürün Ekle
+            </a>
+            <a class="side-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" href="{% url 'product_list' %}">
+                <i class="fa-solid fa-boxes-stacked"></i> Ürünlerim
+            </a>
+            <a class="side-link {% if request.resolver_match.url_name == 'factory_orders' %}active{% endif %}" href="{% url 'factory_orders' %}">
+                <i class="fa-solid fa-receipt"></i> Siparişler
+            </a>
+            <a class="side-link {% if request.resolver_match.url_name == 'factory_reports' %}active{% endif %}" href="{% url 'factory_reports' %}">
+                <i class="fa-solid fa-chart-pie"></i> Raporlar
+            </a>
+            <a class="side-link {% if request.resolver_match.url_name == 'factory_settings' %}active{% endif %}" href="{% url 'factory_settings' %}">
+                <i class="fa-solid fa-gear"></i> Ayarlar
+            </a>
+        </nav>
+        <div class="mt-4">
+            {% if user.factory_profile.is_verified %}
+                <span class="status-pill success"><i class="fa-solid fa-circle-check"></i> Onaylı Hesap</span>
+            {% else %}
+                <span class="status-pill"><i class="fa-solid fa-clock"></i> Onay Bekliyor</span>
+            {% endif %}
+        </div>
+    </aside>
+
+    <section class="panel-main">
+        {% block panel_content %}{% endblock %}
+    </section>
+</main>
+{% endblock %}

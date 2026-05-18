@@ -1,0 +1,25 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Siparişler{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Siparişler</h1>
+        <p>Mağazalardan gelen satın alma talepleri için operasyon ekranı.</p>
+    </div>
+</div>
+
+<div class="metric-grid mb-4">
+    <div class="metric-card"><div class="metric-top"><span>Bekleyen</span><span class="metric-icon"><i class="fa-solid fa-clock"></i></span></div><strong>0</strong></div>
+    <div class="metric-card"><div class="metric-top"><span>Hazırlanan</span><span class="metric-icon"><i class="fa-solid fa-box"></i></span></div><strong>0</strong></div>
+    <div class="metric-card"><div class="metric-top"><span>Kargoda</span><span class="metric-icon"><i class="fa-solid fa-truck"></i></span></div><strong>0</strong></div>
+    <div class="metric-card"><div class="metric-top"><span>Tamamlanan</span><span class="metric-icon"><i class="fa-solid fa-check"></i></span></div><strong>0</strong></div>
+</div>
+
+<div class="empty-state">
+    <i class="fa-solid fa-receipt"></i>
+    <h3>Sipariş modeli bekleniyor</h3>
+    <p>Sepet akışı sipariş modeline bağlandığında fabrika siparişleri burada yönetilecek.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+<article class="product-card">
+    <a class="product-media" href="{% url 'product_detail' product.slug %}">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <div class="product-placeholder"><i class="fa-solid fa-shirt fa-2x"></i></div>
+        {% endif %}
+    </a>
+    {% if user.is_authenticated and user.user_type == 'store' %}
+    <div class="product-actions">
+        <form method="post" action="{% url 'toggle_favorite' product.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button class="icon-btn {% if product.id in favorite_ids %}active{% endif %}" type="submit" title="Favori">
+                <i class="fa-solid fa-heart"></i>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+    <div class="product-card-body">
+        <span class="tag-badge">{{ product.category.name|default:"Kategorisiz" }}</span>
+        <h3 class="mt-3">{{ product.name }}</h3>
+        <p class="product-meta">
+            {{ product.factory.factory_profile.company_name|default:product.factory.username }}
+        </p>
+        <div class="price-row">
+            <span class="price">{{ product.price }} ₺</span>
+            {% if product.is_in_stock %}
+                <span class="stock-badge"><i class="fa-solid fa-check"></i> Stokta</span>
+            {% else %}
+                <span class="stock-badge out"><i class="fa-solid fa-xmark"></i> Tükendi</span>
+            {% endif %}
+        </div>
+        <div class="d-grid gap-2 mt-3">
+            <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary">
+                <i class="fa-solid fa-eye"></i> Detay
+            </a>
+            {% if user.is_authenticated and user.user_type == 'store' and product.is_in_stock %}
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button class="btn btn-primary w-100" type="submit">
+                    <i class="fa-solid fa-bag-shopping"></i> Sepete Ekle
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</article>

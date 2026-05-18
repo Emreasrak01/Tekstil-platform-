@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Sepet - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <div class="page-heading">
+        <div>
+            <h1>Sepet</h1>
+            <p>Satın alma listenizi miktar ve stok durumuna göre düzenleyin.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'store_dashboard' %}">
+            <i class="fa-solid fa-arrow-left"></i> Ürünlere Dön
+        </a>
+    </div>
+
+    <div class="cart-layout">
+        <section>
+            {% for item in cart_items %}
+            <article class="cart-item">
+                {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                {% else %}
+                    <div class="product-placeholder"><i class="fa-solid fa-shirt"></i></div>
+                {% endif %}
+                <div>
+                    <h5 class="fw-bold mb-1">{{ item.product.name }}</h5>
+                    <p class="text-muted mb-2">{{ item.product.factory.factory_profile.company_name|default:item.product.factory.username }}</p>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="price">{{ item.product.price }} ₺</span>
+                        <span class="stock-badge">Stok: {{ item.product.stock }}</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <form method="post" action="{% url 'update_cart_qty' item.id %}" class="d-flex gap-2 mb-2">
+                        {% csrf_token %}
+                        <input class="form-control" style="width: 92px;" type="number" name="quantity" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}">
+                        <button class="btn btn-outline-primary" type="submit" title="Güncelle"><i class="fa-solid fa-rotate"></i></button>
+                    </form>
+                    <strong>{{ item.line_total }} ₺</strong>
+                    <form method="post" action="{% url 'remove_cart_item' item.id %}" class="mt-2">
+                        {% csrf_token %}
+                        <button class="btn btn-outline-danger btn-sm" type="submit">
+                            <i class="fa-solid fa-trash"></i> Kaldır
+                        </button>
+                    </form>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <h3>Sepet boş</h3>
+                <p>Mağaza panelinden ürünleri sepete ekleyebilirsiniz.</p>
+                <a class="btn btn-primary" href="{% url 'store_dashboard' %}">Ürünlere Git</a>
+            </div>
+            {% endfor %}
+        </section>
+
+        <aside class="summary-panel surface-card">
+            <h4 class="fw-bold mb-3">Özet</h4>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Ürün satırı</span>
+                <strong>{{ cart_items.count }}</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-4">
+                <span class="text-muted">Toplam</span>
+                <strong class="price">{{ total_price }} ₺</strong>
+            </div>
+            <button class="btn btn-primary w-100" type="button">
+                <i class="fa-solid fa-credit-card"></i> Satın Alma Talebi Oluştur
+            </button>
+            <p class="form-help mt-3 mb-0">Sipariş modeli eklendiğinde bu buton doğrudan sipariş oluşturma akışına bağlanabilir.</p>
+        </aside>
+    </div>
+</main>
+{% endblock %}

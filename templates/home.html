@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}AREM81 - Tekstil Ticaret Platformu{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="hero-band">
+        <div class="hero-content">
+            <span class="eyebrow"><i class="fa-solid fa-industry"></i> B2B tekstil pazarı</span>
+            <h1>AREM81</h1>
+            <p>Fabrikaların ürünlerini mağazalarla buluşturan modern, hızlı ve sade ticaret alanı.</p>
+            <div class="hero-actions">
+                {% if user.is_authenticated and user.user_type == 'store' %}
+                    <a class="btn btn-light btn-lg" href="{% url 'store_dashboard' %}">
+                        <i class="fa-solid fa-store"></i> Mağaza Paneline Git
+                    </a>
+                {% elif user.is_authenticated and user.user_type == 'factory' %}
+                    <a class="btn btn-light btn-lg" href="{% url 'factory_dashboard' %}">
+                        <i class="fa-solid fa-chart-line"></i> Fabrika Paneline Git
+                    </a>
+                {% else %}
+                    <a class="btn btn-light btn-lg" href="{% url 'register_choice' %}">
+                        <i class="fa-solid fa-user-plus"></i> Hemen Başla
+                    </a>
+                    <a class="btn btn-outline-light btn-lg" href="{% url 'login' %}">
+                        <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section-shell px-0">
+        <div class="section-heading">
+            <div>
+                <h2>Kategoriler</h2>
+                <p>Mağazaların hızlı karar vermesi için düzenli ürün aileleri.</p>
+            </div>
+            <a class="btn btn-outline-primary" href="{% url 'product_home' %}">
+                <i class="fa-solid fa-layer-group"></i> Tüm Katalog
+            </a>
+        </div>
+        <div class="category-grid">
+            {% for category in categories %}
+            <a class="category-card text-decoration-none" href="{% if user.is_authenticated and user.user_type == 'store' %}{% url 'store_dashboard' %}?category={{ category.id }}{% else %}{% url 'product_home' %}?category={{ category.id }}{% endif %}">
+                {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                {% else %}
+                    <div class="category-placeholder"><i class="fa-solid fa-tag fa-2x"></i></div>
+                {% endif %}
+                <div class="category-card-body">
+                    <h3>{{ category.name }}</h3>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-tags"></i>
+                <h3>Kategori yok</h3>
+                <p>Admin panelinden kategori ekleyerek vitrini zenginleştirebilirsiniz.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section-shell px-0 pt-0">
+        <div class="section-heading">
+            <div>
+                <h2>Öne Çıkan Ürünler</h2>
+                <p>Yeni eklenen aktif ürünler vitrine otomatik düşer.</p>
+            </div>
+        </div>
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'includes/product_card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>Henüz ürün yok</h3>
+            <p>Fabrika hesabı ile giriş yapıp ilk ürünleri ekleyebilirsiniz.</p>
+            <a class="btn btn-primary" href="{% url 'register_choice' %}">Kayıt Ol</a>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

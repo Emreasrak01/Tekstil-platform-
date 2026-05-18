@@ -1,0 +1,90 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Ürünlerim{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Ürünlerim</h1>
+        <p>Ürün portföyünüzü filtreleyin, düzenleyin ve stok durumunu takip edin.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'add_product' %}">
+        <i class="fa-solid fa-plus"></i> Yeni Ürün
+    </a>
+</div>
+
+<form method="get" class="surface-card mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Arama</label>
+            <input class="form-control" name="search" value="{{ search_query }}" placeholder="Ürün adı">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Kategori</label>
+            <select class="form-select" name="category">
+                <option value="">Tüm kategoriler</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if category_filter == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Durum</label>
+            <select class="form-select" name="status">
+                <option value="">Tümü</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Aktif</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Pasif</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i> Filtrele</button>
+        </div>
+    </div>
+</form>
+
+{% if products %}
+<div class="product-grid">
+    {% for product in products %}
+    <article class="product-card">
+        <a class="product-media" href="{% url 'product_detail' product.slug %}">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="product-placeholder"><i class="fa-solid fa-shirt fa-2x"></i></div>
+            {% endif %}
+        </a>
+        <div class="product-card-body">
+            <span class="tag-badge">{{ product.category.name|default:"Kategorisiz" }}</span>
+            <h3 class="mt-3">{{ product.name }}</h3>
+            <p class="product-meta">Eklenme: {{ product.created_at|date:"d M Y" }}</p>
+            <div class="price-row">
+                <span class="price">{{ product.price }} ₺</span>
+                {% if product.stock == 0 %}
+                    <span class="stock-badge out">Stok yok</span>
+                {% elif product.stock < 10 %}
+                    <span class="stock-badge low">{{ product.stock }} adet</span>
+                {% else %}
+                    <span class="stock-badge">{{ product.stock }} adet</span>
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <a class="btn btn-outline-primary flex-fill" href="{% url 'edit_product' product.pk %}">
+                    <i class="fa-solid fa-pen"></i> Düzenle
+                </a>
+                <a class="btn btn-outline-danger" href="{% url 'delete_product' product.pk %}" title="Sil">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fa-solid fa-box-open"></i>
+    <h3>Ürün bulunamadı</h3>
+    <p>Filtreleri temizleyin veya yeni ürün ekleyin.</p>
+    <a class="btn btn-primary" href="{% url 'add_product' %}">Ürün Ekle</a>
+</div>
+{% endif %}
+{% endblock %}

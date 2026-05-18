@@ -1,0 +1,59 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Raporlar{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Raporlar</h1>
+        <p>Ürün, stok ve görünürlük durumunu tek ekrandan okuyun.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="surface-card chart-box">
+            <div class="list-heading">
+                <div>
+                    <h2>Stok Özeti</h2>
+                    <p>Ürünlerinizin güncel stok listesi.</p>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Ürün</th>
+                            <th>Kategori</th>
+                            <th>Stok</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name|default:"Kategorisiz" }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>{% if product.stock == 0 %}<span class="stock-badge out">Stok yok</span>{% elif product.stock < 10 %}<span class="stock-badge low">Düşük</span>{% else %}<span class="stock-badge">İyi</span>{% endif %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">Raporlanacak ürün yok.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="surface-card">
+            <h2 class="h5 fw-bold">Hızlı Notlar</h2>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> Stok 10 altına düşünce düşük görünür.</li>
+                <li><i class="fa-solid fa-check"></i> Pasif ürünler mağazada listelenmez.</li>
+                <li><i class="fa-solid fa-check"></i> Sipariş modeli eklendiğinde satış grafikleri bağlanabilir.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

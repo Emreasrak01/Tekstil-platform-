@@ -1,0 +1,88 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Fabrika Paneli{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Genel Bakış</h1>
+        <p>Ürün portföyünüzün güncel durumu ve son eklenen kayıtlar.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'add_product' %}">
+        <i class="fa-solid fa-plus"></i> Ürün Ekle
+    </a>
+</div>
+
+<div class="metric-grid mb-4">
+    <div class="metric-card">
+        <div class="metric-top"><span>Toplam Ürün</span><span class="metric-icon"><i class="fa-solid fa-box"></i></span></div>
+        <strong>{{ total_products|default:0 }}</strong>
+    </div>
+    <div class="metric-card">
+        <div class="metric-top"><span>Aktif Ürün</span><span class="metric-icon"><i class="fa-solid fa-circle-check"></i></span></div>
+        <strong>{{ active_products|default:0 }}</strong>
+    </div>
+    <div class="metric-card">
+        <div class="metric-top"><span>Düşük Stok</span><span class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></span></div>
+        <strong>{{ low_stock_products|default:0 }}</strong>
+    </div>
+    <div class="metric-card">
+        <div class="metric-top"><span>Stokta Yok</span><span class="metric-icon"><i class="fa-solid fa-ban"></i></span></div>
+        <strong>{{ out_of_stock_products|default:0 }}</strong>
+    </div>
+</div>
+
+<div class="data-table-wrap">
+    <div class="list-heading p-3 mb-0">
+        <div>
+            <h2>Son Eklenen Ürünler</h2>
+            <p>En yeni 10 ürün kaydı.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'product_list' %}">
+            <i class="fa-solid fa-list"></i> Tümünü Gör
+        </a>
+    </div>
+    {% if products %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Kategori</th>
+                    <th>Fiyat</th>
+                    <th>Stok</th>
+                    <th>Durum</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            {% if product.image %}<img class="thumb" src="{{ product.image.url }}" alt="{{ product.name }}">{% endif %}
+                            <strong>{{ product.name }}</strong>
+                        </div>
+                    </td>
+                    <td>{{ product.category.name|default:"Kategorisiz" }}</td>
+                    <td><strong>{{ product.price }} ₺</strong></td>
+                    <td>{{ product.stock }}</td>
+                    <td>{% if product.is_active %}<span class="stock-badge">Aktif</span>{% else %}<span class="stock-badge out">Pasif</span>{% endif %}</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'edit_product' product.pk %}" title="Düzenle"><i class="fa-solid fa-pen"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state m-3">
+        <i class="fa-solid fa-box-open"></i>
+        <h3>Ürün yok</h3>
+        <p>İlk ürününüzü ekleyerek vitrinde görünmeye başlayın.</p>
+        <a class="btn btn-primary" href="{% url 'add_product' %}">Ürün Ekle</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

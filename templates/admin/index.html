@@ -1,0 +1,868 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+    
+    #content {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    
+    .dashboard-main {
+        flex: 1;
+        padding: 32px;
+        overflow-y: auto;
+    }
+    
+    /* Header Section */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 36px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    .header-left h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+    }
+    
+    .header-left p {
+        color: #94a3b8;
+        font-size: 15px;
+    }
+    
+    .header-right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    
+    .quick-action-btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(59, 130, 246, 0.6);
+    }
+    
+    .btn-secondary {
+        background: rgba(148, 163, 184, 0.1);
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(148, 163, 184, 0.2);
+    }
+    
+    /* Stats Grid - 4 Column */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(148, 163, 184, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .stat-card.blue { --accent-color: #3b82f6; }
+    .stat-card.purple { --accent-color: #8b5cf6; }
+    .stat-card.green { --accent-color: #10b981; }
+    .stat-card.amber { --accent-color: #f59e0b; }
+    .stat-card.rose { --accent-color: #f43f5e; }
+    .stat-card.cyan { --accent-color: #06b6d4; }
+    
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: linear-gradient(135deg, var(--accent-color), transparent);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .stat-trend.down {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .stat-label {
+        color: #94a3b8;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        color: #f1f5f9;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+    
+    .stat-subtitle {
+        color: #64748b;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Main Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+    
+    .content-section {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title .icon {
+        font-size: 20px;
+    }
+    
+    .view-all-link {
+        color: #60a5fa;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .view-all-link:hover {
+        color: #93c5fd;
+    }
+    
+    /* Modern Table */
+    .modern-table {
+        width: 100%;
+    }
+    
+    .table-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        gap: 16px;
+        align-items: center;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid rgba(148, 163, 184, 0.05);
+        transition: all 0.2s ease;
+    }
+    
+    .table-row:hover {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(148, 163, 184, 0.2);
+        transform: translateX(4px);
+    }
+    
+    .table-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 2px solid rgba(148, 163, 184, 0.2);
+    }
+    
+    .table-info h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-bottom: 2px;
+    }
+    
+    .table-info p {
+        font-size: 12px;
+        color: #64748b;
+    }
+    
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge-success {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    
+    .badge-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .badge-info {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    
+    .badge-purple {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    
+    .table-action-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: rgba(59, 130, 246, 0.1);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .table-action-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.4);
+    }
+    
+    /* Activity Feed */
+    .activity-item {
+        display: flex;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(30, 41, 59, 0.4);
+        margin-bottom: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.05);
+        transition: all 0.2s ease;
+    }
+    
+    .activity-item:hover {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(148, 163, 184, 0.2);
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .activity-icon.blue { background: rgba(59, 130, 246, 0.15); }
+    .activity-icon.green { background: rgba(16, 185, 129, 0.15); }
+    .activity-icon.purple { background: rgba(139, 92, 246, 0.15); }
+    .activity-icon.amber { background: rgba(245, 158, 11, 0.15); }
+    
+    .activity-content h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-bottom: 4px;
+    }
+    
+    .activity-content p {
+        font-size: 12px;
+        color: #64748b;
+    }
+    
+    .activity-time {
+        font-size: 11px;
+        color: #475569;
+        margin-top: 4px;
+    }
+    
+    /* Chart Card */
+    .chart-wrapper {
+        height: 240px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 14px;
+        position: relative;
+    }
+    
+    .chart-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px dashed rgba(148, 163, 184, 0.2);
+    }
+    
+    /* Bottom Grid */
+    .bottom-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+    
+    /* Progress Ring */
+    .progress-ring {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 16px;
+        position: relative;
+    }
+    
+    .progress-ring svg {
+        transform: rotate(-90deg);
+    }
+    
+    .progress-ring circle {
+        fill: none;
+        stroke-width: 8;
+    }
+    
+    .progress-ring .bg {
+        stroke: rgba(148, 163, 184, 0.1);
+    }
+    
+    .progress-ring .progress {
+        stroke: url(#gradient);
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s ease;
+    }
+    
+    .progress-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+    
+    .progress-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: #f1f5f9;
+    }
+    
+    .progress-label {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: #64748b;
+    }
+    
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.4;
+    }
+    
+    .empty-state p {
+        font-size: 14px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1400px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 1200px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .bottom-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-main {
+            padding: 16px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .bottom-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        
+        .header-right {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.3);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(148, 163, 184, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <h1>📊 Yönetim Paneli</h1>
+                <p>Sistemin tüm metriklerini buradan takip edebilirsiniz</p>
+            </div>
+            <div class="header-right">
+                <button class="quick-action-btn btn-secondary">
+                    <span>📥</span> Rapor Al
+                </button>
+                <button class="quick-action-btn btn-primary">
+                    <span>➕</span> Yeni Ekle
+                </button>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-trend">
+                        <span>↑</span> 12%
+                    </div>
+                </div>
+                <div class="stat-label">Toplam Kullanıcı</div>
+                <div class="stat-value">{{ statistics.total_users }}</div>
+                <div class="stat-subtitle">
+                    {{ statistics.factory_users }} Fabrika • {{ statistics.store_users }} Mağaza
+                </div>
+            </div>
+            
+            <div class="stat-card amber">
+                <div class="stat-header">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-trend down">
+                        <span>↓</span> 3%
+                    </div>
+                </div>
+                <div class="stat-label">Onay Bekleyen</div>
+                <div class="stat-value">{{ statistics.pending_factories }}</div>
+                <div class="stat-subtitle">
+                    {{ statistics.verified_factories }} Onaylı Fabrika
+                </div>
+            </div>
+            
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-trend">
+                        <span>↑</span> 8%
+                    </div>
+                </div>
+                <div class="stat-label">Toplam Ürün</div>
+                <div class="stat-value">{{ statistics.total_products }}</div>
+                <div class="stat-subtitle">
+                    {{ statistics.active_products }} Aktif Ürün
+                </div>
+            </div>
+            
+            <div class="stat-card rose">
+                <div class="stat-header">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-trend down">
+                        <span>↓</span> 5%
+                    </div>
+                </div>
+                <div class="stat-label">Stok Durumu</div>
+                <div class="stat-value">{{ statistics.out_of_stock }}</div>
+                <div class="stat-subtitle">
+                    Tükenen • {{ statistics.low_stock }} Düşük Stok
+                </div>
+            </div>
+            
+            <div class="stat-card purple">
+                <div class="stat-header">
+                    <div class="stat-icon">🏷️</div>
+                    <div class="stat-trend">
+                        <span>↑</span> 2%
+                    </div>
+                </div>
+                <div class="stat-label">Kategoriler</div>
+                <div class="stat-value">{{ statistics.total_categories }}</div>
+                <div class="stat-subtitle">
+                    Aktif Kategori Sayısı
+                </div>
+            </div>
+            
+            <div class="stat-card cyan">
+                <div class="stat-header">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-trend">
+                        <span>↑</span> 15%
+                    </div>
+                </div>
+                <div class="stat-label">Bu Ay</div>
+                <div class="stat-value">{{ statistics.new_users_month }}</div>
+                <div class="stat-subtitle">
+                    Yeni Kullanıcı • {{ statistics.new_products_month }} Yeni Ürün
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left: Pending Factories -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">⏳</span>
+                        Onay Bekleyen Fabrikalar
+                    </h2>
+                    <a href="{% url 'admin:accounts_factoryprofile_changelist' %}?is_verified__exact=0" class="view-all-link">
+                        Tümünü Gör →
+                    </a>
+                </div>
+                
+                {% if pending_factory_list %}
+                <div class="modern-table">
+                    {% for factory in pending_factory_list %}
+                    <div class="table-row">
+                        <div class="table-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                            {{ factory.company_name|slice:":1" }}
+                        </div>
+                        <div class="table-info">
+                            <h4>{{ factory.company_name }}</h4>
+                            <p>{{ factory.city }} • {{ factory.tax_number }}</p>
+                        </div>
+                        <span class="badge badge-warning">Bekliyor</span>
+                        <a href="{% url 'admin:accounts_factoryprofile_change' factory.id %}" class="table-action-btn">
+                            İncele
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">✅</div>
+                    <p>Onay bekleyen fabrika bulunmuyor</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Right: Activity Feed -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">🔔</span>
+                        Son Aktiviteler
+                    </h2>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon green">✓</div>
+                    <div class="activity-content">
+                        <h4>Fabrika Onaylandı</h4>
+                        <p>{{ statistics.verified_factories }} fabrika aktif durumda</p>
+                        <div class="activity-time">2 saat önce</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon blue">📦</div>
+                    <div class="activity-content">
+                        <h4>Yeni Ürün Eklendi</h4>
+                        <p>{{ statistics.new_products_month }} ürün bu ay eklendi</p>
+                        <div class="activity-time">5 saat önce</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon purple">👤</div>
+                    <div class="activity-content">
+                        <h4>Yeni Kullanıcı Kaydı</h4>
+                        <p>{{ statistics.new_users_month }} yeni kayıt bu ay</p>
+                        <div class="activity-time">1 gün önce</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon amber">⚠️</div>
+                    <div class="activity-content">
+                        <h4>Düşük Stok Uyarısı</h4>
+                        <p>{{ statistics.low_stock }} ürün kritik stokta</p>
+                        <div class="activity-time">2 gün önce</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Grid -->
+        <div class="bottom-grid">
+            <!-- Recent Products -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">🆕</span>
+                        Son Ürünler
+                    </h2>
+                    <a href="{% url 'admin:products_product_changelist' %}" class="view-all-link">
+                        Tümünü Gör →
+                    </a>
+                </div>
+                
+                <div class="modern-table">
+                    {% for product in recent_products|slice:":4" %}
+                    <div class="table-row">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="table-avatar" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="table-avatar" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);"></div>
+                        {% endif %}
+                        <div class="table-info">
+                            <h4>{{ product.name|truncatechars:25 }}</h4>
+                            <p>{{ product.price }} ₺</p>
+                        </div>
+                        {% if product.stock == 0 %}
+                        <span class="badge badge-danger">Tükendi</span>
+                        {% elif product.stock < 10 %}
+                        <span class="badge badge-warning">{{ product.stock }}</span>
+                        {% else %}
+                        <span class="badge badge-success">{{ product.stock }}</span>
+                        {% endif %}
+                        <a href="{% url 'admin:products_product_change' product.id %}" class="table-action-btn">
+                            Düzenle
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Top Factories -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">🏭</span>
+                        En Aktif Fabrikalar
+                    </h2>
+                </div>
+                
+                <div class="modern-table">
+                    {% for factory in top_factories|slice:":4" %}
+                    <div class="table-row">
+                        <div class="table-avatar" style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                            {{ factory.company_name|slice:":1" }}
+                        </div>
+                        <div class="table-info">
+                            <h4>{{ factory.company_name|truncatechars:25 }}</h4>
+                            <p>{{ factory.product_count }} Ürün</p>
+                        </div>
+                        {% if factory.is_verified %}
+                        <span class="badge badge-success">✓ Onaylı</span>
+                        {% else %}
+                        <span class="badge badge-warning">Bekliyor</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Top Categories -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">🏆</span>
+                        Popüler Kategoriler
+                    </h2>
+                    <a href="{% url 'admin:products_category_changelist' %}" class="view-all-link">
+                        Tümünü Gör →
+                    </a>
+                </div>
+                
+                <div class="modern-table">
+                    {% for category in top_categories|slice:":4" %}
+                    <div class="table-row">
+                        {% if category.image %}
+                        <img src="{{ category.image.url }}" class="table-avatar" alt="{{ category.name }}">
+                        {% else %}
+                        <div class="table-avatar" style="background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);"></div>
+                        {% endif %}
+                        <div class="table-info">
+                            <h4>{{ category.name }}</h4>
+                            <p>{{ category.product_count }} Ürün</p>
+                        </div>
+                        <span class="badge badge-purple">{{ category.product_count }}</span>
+                        <a href="{% url 'admin:products_category_change' category.id %}" class="table-action-btn">
+                            Düzenle
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

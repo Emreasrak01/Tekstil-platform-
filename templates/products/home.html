@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Katalog - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="market-hero">
+        <span class="eyebrow"><i class="fa-solid fa-boxes-stacked"></i> Katalog</span>
+        <h1>Güncel tekstil ürünleri</h1>
+        <p>Kategorilere ayrılmış ürünleri inceleyin, mağaza hesabıyla giriş yaptıktan sonra favoriye ve sepete ekleyin.</p>
+    </section>
+
+    <section class="mb-5">
+        <div class="section-heading">
+            <div>
+                <h2>Kategoriler</h2>
+                <p>Ürünleri ailelerine göre hızlıca tarayın.</p>
+            </div>
+        </div>
+        <div class="category-grid">
+            {% for category in categories %}
+            <a class="category-card text-decoration-none" href="{% if user.is_authenticated and user.user_type == 'store' %}{% url 'store_dashboard' %}?category={{ category.id }}{% else %}{% url 'product_home' %}?category={{ category.id }}{% endif %}">
+                {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                {% else %}
+                    <div class="category-placeholder"><i class="fa-solid fa-tag fa-2x"></i></div>
+                {% endif %}
+                <div class="category-card-body">
+                    <h3>{{ category.name }}</h3>
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-tags"></i>
+                <h3>Kategori yok</h3>
+                <p>Kategori eklendiğinde burada görünecek.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <div>
+                <h2>Tüm Ürünler</h2>
+                <p>Aktif ürün havuzundaki son kayıtlar.</p>
+            </div>
+        </div>
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+                {% include 'includes/product_card.html' %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>Henüz ürün yok</h3>
+            <p>Fabrika panelinden ürün eklenince katalog dolmaya başlayacak.</p>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

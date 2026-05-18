@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Siparişler - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <div class="page-heading">
+        <div>
+            <h1>Siparişler</h1>
+            <p>Satın alma talepleri ve sipariş geçmişi için ayrılmış alan.</p>
+        </div>
+    </div>
+
+    <div class="metric-grid mb-4">
+        <div class="metric-card"><div class="metric-top"><span>Bekleyen</span><span class="metric-icon"><i class="fa-solid fa-clock"></i></span></div><strong>0</strong></div>
+        <div class="metric-card"><div class="metric-top"><span>Onaylanan</span><span class="metric-icon"><i class="fa-solid fa-check"></i></span></div><strong>0</strong></div>
+        <div class="metric-card"><div class="metric-top"><span>Kargoda</span><span class="metric-icon"><i class="fa-solid fa-truck"></i></span></div><strong>0</strong></div>
+        <div class="metric-card"><div class="metric-top"><span>Tamamlanan</span><span class="metric-icon"><i class="fa-solid fa-flag-checkered"></i></span></div><strong>0</strong></div>
+    </div>
+
+    <div class="empty-state">
+        <i class="fa-solid fa-receipt"></i>
+        <h3>Sipariş kaydı yok</h3>
+        <p>Sepetten satın alma talebi oluşturma akışı bağlandığında siparişler burada listelenecek.</p>
+        <a class="btn btn-primary" href="{% url 'store_cart' %}">Sepete Git</a>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,55 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Formda eksik veya hatalı alanlar var.</strong>
+        <ul class="mb-0 mt-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ field }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="row g-3">
+        <div class="col-md-8">
+            <label class="form-label" for="{{ form.name.id_for_label }}">Ürün adı</label>
+            {{ form.name }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.category.id_for_label }}">Kategori</label>
+            {{ form.category }}
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="{{ form.description.id_for_label }}">Açıklama</label>
+            {{ form.description }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.price.id_for_label }}">Fiyat</label>
+            {{ form.price }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.stock.id_for_label }}">Stok</label>
+            {{ form.stock }}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="{{ form.image.id_for_label }}">Ürün görseli</label>
+            {{ form.image }}
+        </div>
+        <div class="col-12">
+            <div class="form-check form-switch">
+                {{ form.is_active }}
+                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Aktif olarak yayınla</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar-actions">
+        <button class="btn btn-primary" type="submit">
+            <i class="fa-solid fa-save"></i> {{ submit_label }}
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'product_list' %}">İptal</a>
+    </div>
+</form>

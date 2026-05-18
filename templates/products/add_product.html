@@ -1,0 +1,19 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Yeni Ürün{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Yeni Ürün</h1>
+        <p>Ürün bilgilerini doldurun, görseli ekleyin ve mağaza vitrininde yayınlayın.</p>
+    </div>
+    <a class="btn btn-outline-primary" href="{% url 'product_list' %}">
+        <i class="fa-solid fa-arrow-left"></i> Ürünlerime Dön
+    </a>
+</div>
+
+<section class="form-panel">
+    {% include 'products/product_form.html' with submit_label='Ürünü Yayınla' %}
+</section>
+{% endblock %}

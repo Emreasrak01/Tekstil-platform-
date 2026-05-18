@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Mağaza Paneli - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="market-hero">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-store"></i> Mağaza çalışma alanı</span>
+                <h1>Merhaba, {{ user.store_profile.store_name|default:user.username }}</h1>
+                <p>Ürünleri filtreleyin, favorilerinizi ayırın ve satın alma sepetinizi hızlıca oluşturun.</p>
+            </div>
+            <a class="btn btn-light" href="{% url 'store_cart' %}">
+                <i class="fa-solid fa-bag-shopping"></i> Sepet {% if cart_count %}({{ cart_count }}){% endif %}
+            </a>
+        </div>
+        <form method="get" class="search-panel">
+            <input type="hidden" name="category" value="{{ category_filter }}">
+            <input type="hidden" name="sort" value="{{ sort }}">
+            <input class="form-control" type="search" name="search" value="{{ search_query }}" placeholder="Ürün adı ile ara">
+            <button class="btn btn-light" type="submit"><i class="fa-solid fa-search"></i> Ara</button>
+        </form>
+    </section>
+
+    <div class="market-layout">
+        <aside class="filter-panel surface-card">
+            <h5 class="fw-bold mb-3">Menü</h5>
+            <nav class="mb-4">
+                <a class="side-link active" href="{% url 'store_dashboard' %}"><i class="fa-solid fa-store"></i> Ürünler</a>
+                <a class="side-link" href="{% url 'store_cart' %}"><i class="fa-solid fa-bag-shopping"></i> Sepet</a>
+                <a class="side-link" href="{% url 'store_favorites' %}"><i class="fa-solid fa-heart"></i> Favoriler</a>
+                <a class="side-link" href="{% url 'store_orders' %}"><i class="fa-solid fa-receipt"></i> Siparişler</a>
+                <a class="side-link" href="{% url 'store_settings' %}"><i class="fa-solid fa-gear"></i> Ayarlar</a>
+            </nav>
+
+            <h5 class="fw-bold mb-3">Kategoriler</h5>
+            <nav>
+                <a class="side-link {% if not category_filter %}active{% endif %}" href="{% url 'store_dashboard' %}">
+                    <i class="fa-solid fa-border-all"></i> Tümü
+                </a>
+                {% for category in categories %}
+                <a class="side-link {% if category_filter == category.id|stringformat:'s' %}active{% endif %}" href="?category={{ category.id }}{% if search_query %}&search={{ search_query }}{% endif %}&sort={{ sort }}">
+                    <i class="fa-solid fa-tag"></i> {{ category.name }}
+                </a>
+                {% endfor %}
+            </nav>
+        </aside>
+
+        <section>
+            <div class="list-heading">
+                <div>
+                    <h2>
+                        {% if search_query %}"{{ search_query }}" sonuçları{% else %}Ürün Havuzu{% endif %}
+                    </h2>
+                    <p>{{ products.count }} ürün listeleniyor.</p>
+                </div>
+                <form method="get" class="d-flex gap-2">
+                    <input type="hidden" name="search" value="{{ search_query }}">
+                    <input type="hidden" name="category" value="{{ category_filter }}">
+                    <select name="sort" class="form-select" onchange="this.form.submit()">
+                        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Yeni eklenen</option>
+                        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Fiyat artan</option>
+                        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Fiyat azalan</option>
+                    </select>
+                </form>
+            </div>
+
+            {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                    {% include 'includes/product_card.html' %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h3>Sonuç bulunamadı</h3>
+                <p>Filtreleri temizleyerek daha geniş bir ürün havuzuna dönebilirsiniz.</p>
+                <a class="btn btn-primary" href="{% url 'store_dashboard' %}">Filtreleri Temizle</a>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</main>
+{% endblock %}

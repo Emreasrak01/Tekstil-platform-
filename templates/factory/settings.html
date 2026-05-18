@@ -1,0 +1,55 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Ayarlar{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Ayarlar</h1>
+        <p>Firma ve iletişim bilgilerinizi güncel tutun.</p>
+    </div>
+</div>
+
+<section class="form-panel">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Kullanıcı adı</label>
+                <input class="form-control" value="{{ user.username }}" readonly>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">E-posta</label>
+                <input class="form-control" type="email" name="email" value="{{ user.email }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Telefon</label>
+                <input class="form-control" name="phone" value="{{ user.phone }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Şirket adı</label>
+                <input class="form-control" name="company_name" value="{{ factory_profile.company_name }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Vergi numarası</label>
+                <input class="form-control" value="{{ factory_profile.tax_number }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Vergi dairesi</label>
+                <input class="form-control" name="tax_office" value="{{ factory_profile.tax_office }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Şehir</label>
+                <input class="form-control" name="city" value="{{ factory_profile.city }}">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Adres</label>
+                <textarea class="form-control" name="address">{{ factory_profile.address }}</textarea>
+            </div>
+        </div>
+        <div class="toolbar-actions">
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-save"></i> Kaydet</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

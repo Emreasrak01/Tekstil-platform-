@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Mağaza Kaydı - AREM81{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block nav %}
+<header class="auth-nav">
+    <div class="auth-nav-inner">
+        <a class="brand-mark" href="{% url 'home' %}">
+            <span class="brand-icon"><i class="fa-solid fa-layer-group"></i></span>
+            <span>AREM81</span>
+        </a>
+        <a class="nav-link-pill" href="{% url 'register_choice' %}"><i class="fa-solid fa-arrow-left"></i> Seçime Dön</a>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="auth-shell">
+    <section class="auth-card">
+        <div class="auth-title">
+            <span class="eyebrow"><i class="fa-solid fa-store"></i> Mağaza hesabı</span>
+            <h1>Mağaza kaydı</h1>
+            <p>Ürün havuzunu keşfetmek ve satın alma listesi oluşturmak için kaydolun.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">Lütfen formdaki hataları kontrol edin.</div>
+            {% endif %}
+
+            <div class="row g-3">
+                <div class="col-12"><label class="form-label">Kullanıcı adı</label>{{ form.username }}{{ form.username.errors }}</div>
+                <div class="col-12"><label class="form-label">E-posta</label>{{ form.email }}{{ form.email.errors }}</div>
+                <div class="col-md-6"><label class="form-label">Telefon</label>{{ form.phone }}{{ form.phone.errors }}</div>
+                <div class="col-md-6"><label class="form-label">Mağaza adı</label>{{ form.store_name }}{{ form.store_name.errors }}</div>
+                <div class="col-md-6"><label class="form-label">Şifre</label>{{ form.password1 }}{{ form.password1.errors }}</div>
+                <div class="col-md-6"><label class="form-label">Şifre tekrar</label>{{ form.password2 }}{{ form.password2.errors }}</div>
+            </div>
+
+            <div class="toolbar-actions">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-check"></i> Kayıt Ol</button>
+                <a class="btn btn-outline-secondary" href="{% url 'login' %}">Zaten hesabım var</a>
+            </div>
+        </form>
+    </section>
+</main>
+{% endblock %}
+
+{% block footer %}{% endblock %}

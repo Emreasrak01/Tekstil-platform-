@@ -1,0 +1,16 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Ürün Sil{% endblock %}
+
+{% block panel_content %}
+<div class="empty-state">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <h3>{{ product.name }} silinsin mi?</h3>
+    <p>Bu işlem ürünü kalıcı olarak kaldırır.</p>
+    <form method="post" class="d-inline-flex gap-2">
+        {% csrf_token %}
+        <button class="btn btn-danger" type="submit"><i class="fa-solid fa-trash"></i> Sil</button>
+        <a class="btn btn-outline-secondary" href="{% url 'product_list' %}">Vazgeç</a>
+    </form>
+</div>
+{% endblock %}

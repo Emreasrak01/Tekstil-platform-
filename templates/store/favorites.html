@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Favoriler - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <div class="page-heading">
+        <div>
+            <h1>Favoriler</h1>
+            <p>Takip etmek istediğiniz ürünleri burada tutun.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'store_dashboard' %}">
+            <i class="fa-solid fa-store"></i> Ürünlere Dön
+        </a>
+    </div>
+
+    {% if favorite_products %}
+    <div class="product-grid">
+        {% for product in favorite_products %}
+            {% include 'includes/product_card.html' %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-heart"></i>
+        <h3>Henüz favori yok</h3>
+        <p>Ürün kartlarındaki kalp ikonuyla ürünleri favorilerinize ekleyebilirsiniz.</p>
+        <a class="btn btn-primary" href="{% url 'store_dashboard' %}">Ürünleri İncele</a>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

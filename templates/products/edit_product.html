@@ -1,0 +1,27 @@
+{% extends 'factory/base.html' %}
+
+{% block panel_title %}Ürün Düzenle{% endblock %}
+
+{% block panel_content %}
+<div class="page-heading">
+    <div>
+        <h1>Ürün Düzenle</h1>
+        <p>{{ product.name }} kaydını güncelleyin.</p>
+    </div>
+    <a class="btn btn-outline-primary" href="{% url 'product_list' %}">
+        <i class="fa-solid fa-arrow-left"></i> Ürünlerime Dön
+    </a>
+</div>
+
+<section class="form-panel">
+    {% if product.image %}
+    <div class="mb-4">
+        <label class="form-label">Mevcut görsel</label>
+        <div>
+            <img class="thumb" style="width: 120px; height: 120px;" src="{{ product.image.url }}" alt="{{ product.name }}">
+        </div>
+    </div>
+    {% endif %}
+    {% include 'products/product_form.html' with submit_label='Değişiklikleri Kaydet' %}
+</section>
+{% endblock %}

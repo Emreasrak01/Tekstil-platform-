@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Kayıt Seçimi - AREM81{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block nav %}
+<header class="auth-nav">
+    <div class="auth-nav-inner">
+        <a class="brand-mark" href="{% url 'home' %}">
+            <span class="brand-icon"><i class="fa-solid fa-layer-group"></i></span>
+            <span>AREM81</span>
+        </a>
+        <a class="nav-link-pill" href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> Giriş Yap</a>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="auth-shell">
+    <div class="auth-title text-center mb-4">
+        <span class="eyebrow"><i class="fa-solid fa-user-plus"></i> Hesap türü</span>
+        <h1>Nasıl kullanacaksınız?</h1>
+        <p>Panel ve yetkiler seçtiğiniz role göre hazırlanır.</p>
+    </div>
+
+    <div class="choice-grid">
+        <section class="choice-card surface-card interactive">
+            <span class="metric-icon"><i class="fa-solid fa-industry"></i></span>
+            <h2>Fabrika</h2>
+            <p class="text-muted">Ürünlerinizi yayınlayın, stok ve satış hazırlıklarınızı yönetin.</p>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> Ürün yönetimi</li>
+                <li><i class="fa-solid fa-check"></i> Stok takibi</li>
+                <li><i class="fa-solid fa-check"></i> Raporlama alanı</li>
+            </ul>
+            <a class="btn btn-primary w-100" href="{% url 'factory_register' %}">Fabrika Olarak Kayıt Ol</a>
+        </section>
+
+        <section class="choice-card surface-card interactive">
+            <span class="metric-icon"><i class="fa-solid fa-store"></i></span>
+            <h2>Mağaza</h2>
+            <p class="text-muted">Ürün havuzunu keşfedin, favori ve sepet listenizi hazırlayın.</p>
+            <ul class="feature-list">
+                <li><i class="fa-solid fa-check"></i> Ürün arama</li>
+                <li><i class="fa-solid fa-check"></i> Favoriler</li>
+                <li><i class="fa-solid fa-check"></i> Sepet yönetimi</li>
+            </ul>
+            <a class="btn btn-primary w-100" href="{% url 'store_register' %}">Mağaza Olarak Kayıt Ol</a>
+        </section>
+    </div>
+</main>
+{% endblock %}
+
+{% block footer %}{% endblock %}

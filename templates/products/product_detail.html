@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - AREM81{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <div class="detail-layout">
+        <section class="detail-media">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="product-placeholder"><i class="fa-solid fa-shirt fa-3x"></i></div>
+            {% endif %}
+        </section>
+
+        <section class="detail-panel surface-card">
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <span class="tag-badge">{{ product.category.name|default:"Kategorisiz" }}</span>
+                {% if product.is_in_stock %}
+                    <span class="stock-badge"><i class="fa-solid fa-check"></i> Stokta</span>
+                {% else %}
+                    <span class="stock-badge out"><i class="fa-solid fa-xmark"></i> Tükendi</span>
+                {% endif %}
+            </div>
+            <h1>{{ product.name }}</h1>
+            <div class="price mb-3">{{ product.price }} ₺</div>
+            <p class="detail-description">{{ product.description }}</p>
+
+            <div class="surface-card mt-4">
+                <h5 class="fw-bold">Tedarikçi</h5>
+                <p class="mb-1">{{ product.factory.factory_profile.company_name|default:product.factory.username }}</p>
+                <p class="text-muted mb-0">{{ product.factory.factory_profile.city }}</p>
+            </div>
+
+            <div class="surface-card mt-3">
+                <h5 class="fw-bold">Stok Bilgisi</h5>
+                <p class="mb-0">{{ product.stock }} adet kullanılabilir stok.</p>
+            </div>
+
+            {% if user.is_authenticated and user.user_type == 'store' %}
+            <div class="mt-4">
+                {% if product.is_in_stock %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="quantity-row">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input class="form-control" type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fa-solid fa-bag-shopping"></i> Sepete Ekle
+                    </button>
+                </form>
+                {% endif %}
+                <form method="post" action="{% url 'toggle_favorite' product.id %}" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="btn {% if is_favorite %}btn-accent{% else %}btn-outline-primary{% endif %} w-100" type="submit">
+                        <i class="fa-solid fa-heart"></i>
+                        {% if is_favorite %}Favorilerden Çıkar{% else %}Favorilere Ekle{% endif %}
+                    </button>
+                </form>
+            </div>
+            {% elif not user.is_authenticated %}
+            <div class="toolbar-actions">
+                <a class="btn btn-primary" href="{% url 'login' %}">Sepete eklemek için giriş yap</a>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    {% if related_products %}
+    <section class="section-shell px-0">
+        <div class="section-heading">
+            <div>
+                <h2>Benzer Ürünler</h2>
+                <p>Aynı kategorideki diğer aktif ürünler.</p>
+            </div>
+        </div>
+        <div class="product-grid">
+            {% for product in related_products %}
+                {% include 'includes/product_card.html' %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</main>
+{% endblock %}

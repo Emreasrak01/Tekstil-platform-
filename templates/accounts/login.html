@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Giriş - AREM81{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block nav %}
+<header class="auth-nav">
+    <div class="auth-nav-inner">
+        <a class="brand-mark" href="{% url 'home' %}">
+            <span class="brand-icon"><i class="fa-solid fa-layer-group"></i></span>
+            <span>AREM81</span>
+        </a>
+        <a class="nav-link-pill" href="{% url 'home' %}"><i class="fa-solid fa-arrow-left"></i> Ana Sayfa</a>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main class="auth-shell">
+    <section class="auth-card">
+        <div class="auth-title">
+            <span class="eyebrow"><i class="fa-solid fa-lock"></i> Güvenli giriş</span>
+            <h1>Hesabınıza giriş yapın</h1>
+            <p>Fabrika ve mağaza çalışma alanınıza devam edin.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" for="username">Kullanıcı adı</label>
+                <input class="form-control" id="username" name="username" autocomplete="username" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="password">Şifre</label>
+                <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-primary w-100" type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <span class="text-muted">Hesabınız yok mu?</span>
+            <a class="fw-bold text-decoration-none" href="{% url 'register_choice' %}">Kayıt olun</a>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block footer %}{% endblock %}
